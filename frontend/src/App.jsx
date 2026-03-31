@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import axios from 'axios'
+import './styles.css'
+
+import sayuLogo from './Logo/sayu-logo.jpg'
 
 export default function App() {
   const [file, setFile] = useState(null)
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [processingComplete, setProcessingComplete] = useState(false)
 
   async function upload() {
     setErrorMessage('')
+    setProcessingComplete(false)
     setRows([])
 
     if (!file) {
@@ -32,6 +37,7 @@ export default function App() {
       })
 
       setRows(res.data || [])
+      setProcessingComplete(true)
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || 'Upload failed.'
       setErrorMessage(msg)
@@ -43,6 +49,7 @@ export default function App() {
   async function downloadExcel() {
     if (!file) return
     setErrorMessage('')
+    setProcessingComplete(false)
 
     setLoading(true)
     try {
@@ -75,58 +82,120 @@ export default function App() {
     }
   }
 
+  const totals = useMemo(() => {
+    const sumHours = rows.reduce((acc, r) => acc + (Number(r.totalHours) || 0), 0)
+    const sumRegular = rows.reduce((acc, r) => acc + (Number(r.regularPay) || 0), 0)
+    const sumOt = rows.reduce((acc, r) => acc + (Number(r.overtimePay) || 0), 0)
+    const sumTotal = rows.reduce((acc, r) => acc + (Number(r.totalSalary) || 0), 0)
+    return { sumHours, sumRegular, sumOt, sumTotal }
+  }, [rows])
+
+  const fmtHours = (v) => (Number.isFinite(v) ? v.toFixed(2) : '0.00')
+  const fmtMoney = (v) =>
+    new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(Number(v) || 0)
+
   return (
     <div>
-      <h2>Payroll Automation</h2>
+      <header className="topbar">
+        <div className="topbarInner">
+          <img className="sayuLogo" src={sayuLogo} alt="sayu" />
+          <div className="topTitle">Payroll Automation System</div>
+        </div>
+      </header>
 
-      <input
-        type="file"
-        accept=".xls,.xlsx"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
+      <main className="container">
+        <section className="card">
+          <h2>Upload Biometrics Data</h2>
+          <p className="subtitle">Upload your Excel file to automatically calculate employee wages</p>
 
-      <div style={{ marginTop: 12 }}>
-        <button onClick={upload} disabled={loading}>
-          {loading ? 'Uploading...' : 'Upload & Calculate'}
-        </button>
+          <div className="uploadBox">
+            <div className="uploadIconCircle">⤴</div>
 
-        <button
-          onClick={downloadExcel}
-          disabled={loading || rows.length === 0}
-          style={{ marginLeft: 8 }}
-        >
-          Download Results (Excel)
-        </button>
-      </div>
+            <div className="chooseRow">
+              <input
+                className="fileInput"
+                id="fileInput"
+                type="file"
+                accept=".xls,.xlsx"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+              <label className="chooseBtn" htmlFor="fileInput">
+                Choose File
+              </label>
+            </div>
 
-      {errorMessage ? (
-        <p style={{ color: 'red', marginTop: 12 }}>{errorMessage}</p>
-      ) : null}
+            <div className="uploadHint">Excel files only (.xlsx, .xls)</div>
+          </div>
 
-      {rows.length > 0 ? (
-        <table border="1" cellPadding="6" cellSpacing="0" style={{ marginTop: 12 }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Total Hours</th>
-              <th>Regular Pay</th>
-              <th>OT Pay</th>
-              <th>Total Salary</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.name}>
-                <td>{r.name}</td>
-                <td>{r.totalHours}</td>
-                <td>{r.regularPay}</td>
-                <td>{r.overtimePay}</td>
-                <td>{r.totalSalary}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : null}
+          <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button className="primaryBtn" onClick={upload} disabled={loading || !file}>
+              {loading ? 'Processing...' : 'Upload & Calculate'}
+            </button>
+
+            <button
+              className="downloadBtn"
+              onClick={downloadExcel}
+              disabled={loading || rows.length === 0}
+            >
+              Download Excel
+            </button>
+          </div>
+
+          {errorMessage ? <div className="dangerText">{errorMessage}</div> : null}
+        </section>
+
+        {processingComplete && rows.length > 0 ? (
+          <div className="successBanner">
+            <span>✓</span>
+            <span>Your payroll calculations are ready below.</span>
+          </div>
+        ) : null}
+
+        {rows.length > 0 ? (
+          <section className="card">
+            <div className="resultsHeader">
+              <div>
+                <h2 style={{ marginBottom: 4 }}>Payroll Results</h2>
+                <div className="employeesCount">{rows.length} employees processed</div>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Total Hours</th>
+                  <th>Regular Pay</th>
+                  <th>OT Pay</th>
+                  <th>Total Salary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.name}>
+                    <td>{r.name}</td>
+                    <td>{fmtHours(r.totalHours)}</td>
+                    <td>{fmtMoney(r.regularPay)}</td>
+                    <td>{fmtMoney(r.overtimePay)}</td>
+                    <td>{fmtMoney(r.totalSalary)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="totalRow">
+                  <td>Total</td>
+                  <td>{fmtHours(totals.sumHours)}</td>
+                  <td>{fmtMoney(totals.sumRegular)}</td>
+                  <td>{fmtMoney(totals.sumOt)}</td>
+                  <td>{fmtMoney(totals.sumTotal)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </section>
+        ) : null}
+      </main>
+
+      <footer className="footer">© 2026 SAYU Cafe - Payroll Automation System</footer>
     </div>
   )
 }

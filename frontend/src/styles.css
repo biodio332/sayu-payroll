@@ -1,0 +1,238 @@
+:root {
+  --sayu-blue: #3f51d9;
+  --card-bg: #ffffff;
+  --page-bg: #f3f6fb;
+  --text: #1f2a37;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --success-bg: #e8f8ef;
+  --success-text: #1a7f37;
+  --total-bg: #fff7d6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: var(--page-bg);
+}
+
+.topbar {
+  background: var(--sayu-blue);
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.topbarInner {
+  width: min(1000px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sayuLogo {
+  height: 30px;
+  width: auto;
+}
+
+.topTitle {
+  font-weight: 700;
+  color: #fff;
+  font-size: 16px;
+}
+
+.container {
+  width: min(1000px, calc(100% - 32px));
+  margin: 22px auto;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+}
+
+.card + .card {
+  margin-top: 18px;
+}
+
+.card h2 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+}
+
+.subtitle {
+  margin: 0 0 16px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.uploadBox {
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.uploadHint {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.uploadIconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  color: var(--sayu-blue);
+  font-size: 18px;
+  border: 1px solid #e0e7ff;
+}
+
+.chooseRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.fileInput {
+  display: none;
+}
+
+.chooseBtn {
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #dbeafe;
+  background: #ffffff;
+  color: var(--sayu-blue);
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.primaryBtn {
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--sayu-blue);
+  background: var(--sayu-blue);
+  color: #fff;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.primaryBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dangerText {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.successBanner {
+  margin-top: 14px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #bff0cc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.resultsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.employeesCount {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.downloadBtn {
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--sayu-blue);
+  background: #ffffff;
+  color: var(--sayu-blue);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.downloadBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-size: 13px;
+}
+
+th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.totalRow td {
+  background: var(--total-bg);
+  border-bottom: none;
+  font-weight: 800;
+}
+
+.footer {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 12px;
+  padding: 22px 0 10px;
+}
+
